@@ -19,3 +19,7 @@ function criarConta(tipo, saldoInicial = 0){
     return novaConta;
 }
 
+function listarContas(){
+    return contas;
+}
+
