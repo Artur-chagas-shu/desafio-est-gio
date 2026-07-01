@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banco Agilize</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🏦 Banco Agilize</h1>
+
+    <section class="card">
+      <h2>Criar conta</h2>
+      <div class="form-group">
+        <label>Tipo:</label>
+        <select id="tipoConta">
+          <option value="corrente">Corrente</option>
+          <option value="poupanca">Poupança</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Saldo inicial:</label>
+        <input type="number" id="saldoInicial" value="0" min="0" step="0.01">
+      </div>
+      <button id="btnCriar">Criar conta</button>
+    </section>
+
+    <section class="card">
+      <h2>Contas existentes</h2>
+      <ul id="listaContas"></ul>
+    </section>
+
+    <section class="card">
+      <h2>Saque</h2>
+      <div class="form-group">
+        <label>ID da conta:</label>
+        <input type="text" id="saqueId" placeholder="UUID da conta">
+      </div>
+      <div class="form-group">
+        <label>Valor:</label>
+        <input type="number" id="saqueValor" min="0.01" step="0.01">
+      </div>
+      <button id="btnSacar">Sacar</button>
+      <p id="msgSaque" class="mensagem"></p>
+    </section>
+
+    <section class="card">
+      <h2>Transferência</h2>
+      <div class="form-group">
+        <label>Conta origem:</label>
+        <input type="text" id="transfOrigem" placeholder="UUID origem">
+      </div>
+      <div class="form-group">
+        <label>Conta destino:</label>
+        <input type="text" id="transfDestino" placeholder="UUID destino">
+      </div>
+      <div class="form-group">
+        <label>Valor:</label>
+        <input type="number" id="transfValor" min="0.01" step="0.01">
+      </div>
+      <button id="btnTransferir">Transferir</button>
+      <p id="msgTransf" class="mensagem"></p>
+    </section>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
