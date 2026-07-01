@@ -109,5 +109,10 @@ btnTransferir.addEventListener('click', async () => {
     msgTransf.className = 'mensagem error';
   }
 });
+function copiarId(id) {
+  navigator.clipboard.writeText(id)
+    .then(() => alert('ID copiado!'))
+    .catch(() => alert('Erro ao copiar. Tente manualmente.'));
+}
 
 carregarContas();
