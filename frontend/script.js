@@ -28,6 +28,13 @@ async function carregarContas() {
   }
 }
 
+function copiarId(id) {
+  navigator.clipboard.writeText(id)
+    .then(() => alert('ID copiado!'))
+    .catch(() => alert('Erro ao copiar. Tente manualmente.'));
+}
+
+// Criar conta
 btnCriar.addEventListener('click', async () => {
   const tipo = document.getElementById('tipoConta').value;
   const saldoInicial = parseFloat(document.getElementById('saldoInicial').value) || 0;
@@ -37,18 +44,19 @@ btnCriar.addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ tipo, saldoInicial })
     });
+    const data = await res.json();
     if (!res.ok) {
-      const err = await res.json();
-      alert(err.erro);
+      alert(data.erro || `Erro ${res.status}`);
       return;
     }
     document.getElementById('saldoInicial').value = 0;
     carregarContas();
   } catch (e) {
-    alert('Erro de conexão');
+    alert('Erro de conexão ao criar conta.');
   }
 });
 
+// Saque
 btnSacar.addEventListener('click', async () => {
   const idConta = document.getElementById('saqueId').value.trim();
   const valor = parseFloat(document.getElementById('saqueValor').value);
@@ -65,8 +73,9 @@ btnSacar.addEventListener('click', async () => {
     });
     const data = await res.json();
     if (!res.ok) {
-      msgSaque.textContent = data.erro;
+      msgSaque.textContent = data.erro || `Erro ${res.status}`;
       msgSaque.className = 'mensagem error';
+      console.error('Erro no saque:', data.erro || `Status ${res.status}`);
     } else {
       const tarifaTexto = data.tarifa > 0 ? ` (tarifa de R$ 1,00 aplicada)` : '';
       msgSaque.textContent = `${data.mensagem} Saldo atual: R$ ${data.conta.saldo.toFixed(2)}${tarifaTexto}`;
@@ -76,9 +85,11 @@ btnSacar.addEventListener('click', async () => {
   } catch (e) {
     msgSaque.textContent = 'Erro de conexão.';
     msgSaque.className = 'mensagem error';
+    console.error('Falha na requisição de saque:', e);
   }
 });
 
+// Transferência
 btnTransferir.addEventListener('click', async () => {
   const idOrigem = document.getElementById('transfOrigem').value.trim();
   const idDestino = document.getElementById('transfDestino').value.trim();
@@ -96,8 +107,9 @@ btnTransferir.addEventListener('click', async () => {
     });
     const data = await res.json();
     if (!res.ok) {
-      msgTransf.textContent = data.erro;
+      msgTransf.textContent = data.erro || `Erro ${res.status}`;
       msgTransf.className = 'mensagem error';
+      console.error('Erro na transferência:', data.erro || `Status ${res.status}`);
     } else {
       const tarifaTexto = data.tarifa > 0 ? ` (tarifa de R$ 1,00 aplicada)` : '';
       msgTransf.textContent = `${data.mensagem}${tarifaTexto}`;
@@ -107,12 +119,9 @@ btnTransferir.addEventListener('click', async () => {
   } catch (e) {
     msgTransf.textContent = 'Erro de conexão.';
     msgTransf.className = 'mensagem error';
+    console.error('Falha na requisição de transferência:', e);
   }
 });
-function copiarId(id) {
-  navigator.clipboard.writeText(id)
-    .then(() => alert('ID copiado!'))
-    .catch(() => alert('Erro ao copiar. Tente manualmente.'));
-}
 
+// Carregar contas ao iniciar
 carregarContas();
