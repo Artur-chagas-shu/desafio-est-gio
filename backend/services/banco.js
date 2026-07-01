@@ -82,3 +82,11 @@ function transferir (idOrigem, idDestino, valor ){
     }
 }
 
+module.exports = { 
+    criarConta,
+    listarContas,
+    buscarConta,
+    sacar,
+    transferir
+};
+
