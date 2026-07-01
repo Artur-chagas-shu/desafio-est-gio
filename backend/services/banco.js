@@ -53,3 +53,32 @@ function sacar(idConta, valor ){
     }
 }
 
+function transferir (idOrigem, idDestino, valor ){
+    const origem = buscarConta(idOrigem);
+    const destino = buscarConta(idDestino);
+
+    if(idOrigem === idDestino){
+        throw new Error('Não é possível transferir para a mesma conta.');
+    }
+    if(valor <= 0) throw new Error('Valor de transferência deve ser positivo.');
+
+    if(origem.tipo === "corrente"){
+        const tarifa = 1.0;
+        const novoSaldoOrigem = origem.saldo - valor - tarifa;
+        if(novoSaldoOrigem < -500){
+            throw new Error('Saldo insuficiente. Limite de saldo negativo é de R$ 500,00.');
+        }
+        origem.saldo = novoSaldoOrigem;
+        destino.saldo += valor;
+        return {origem, destino, tarifa};
+
+    }else if (origem.tipo === "poupanca"){
+        if(origem.saldo < valor){
+            throw new Error("Saldo insuficiente. Não é permitido saldo negativo em contas poupança.");
+        }
+        origem.saldo -= valor;
+        destino.saldo += valor;
+        return {origem, destino, tarifa:0};
+    }
+}
+
