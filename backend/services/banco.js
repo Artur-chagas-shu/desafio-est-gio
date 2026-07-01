@@ -31,3 +31,25 @@ function buscarConta(id){
 return conta;
 }
 
+
+function sacar(idConta, valor ){
+    const conta = buscarConta(idConta);
+    if(valor <= 0) throw new Error('Valor de saque deve ser positivo.');
+
+    if(conta.tipo === "corrente"){
+        const tarifa = 1.0;
+        const novoSaldo = conta.saldo - valor - tarifa;
+        if(novoSaldo < -500){
+            throw new Error('Saldo insuficiente. Limite de saldo negativo é de R$ 500,00.');
+        }
+        conta.saldo = novoSaldo;
+        return {conta, tarifa};
+    } else if (conta.tipo === "poupanca"){
+        if(conta.saldo < valor){
+            throw new Error("Saldo insuficiente. Não é permitido saldo negativo em contas poupança.");
+        }
+        conta.saldo -= valor;
+        return {conta, tarifa:0};
+    }
+}
+
