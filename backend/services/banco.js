@@ -23,3 +23,11 @@ function listarContas(){
     return contas;
 }
 
+function buscarConta(id){
+    const conta = contas.find (conta => conta.id === id);
+    if(!conta){
+        throw new Error('Conta não encontrada.');    
+}
+return conta;
+}
+
