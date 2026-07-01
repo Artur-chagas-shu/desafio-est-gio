@@ -7,6 +7,17 @@ const listaContas = document.getElementById('listaContas');
 const msgSaque = document.getElementById('msgSaque');
 const msgTransf = document.getElementById('msgTransf');
 
+// Função para extrair mensagem de erro da resposta JSON
+async function extrairErro(res) {
+  try {
+    const data = await res.json();
+    // Prioriza a chave 'erro', depois 'error', 'message', ou status
+    return data.erro || data.error || data.message || `Erro ${res.status}`;
+  } catch {
+    return `Erro ${res.status} (resposta inválida)`;
+  }
+}
+
 async function carregarContas() {
   try {
     const res = await fetch(`${API}/contas`);
@@ -44,9 +55,9 @@ btnCriar.addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ tipo, saldoInicial })
     });
-    const data = await res.json();
     if (!res.ok) {
-      alert(data.erro || `Erro ${res.status}`);
+      const msg = await extrairErro(res);
+      alert(msg);
       return;
     }
     document.getElementById('saldoInicial').value = 0;
@@ -71,17 +82,18 @@ btnSacar.addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ idConta, valor })
     });
-    const data = await res.json();
     if (!res.ok) {
-      msgSaque.textContent = data.erro || `Erro ${res.status}`;
+      const msg = await extrairErro(res);
+      msgSaque.textContent = msg;
       msgSaque.className = 'mensagem error';
-      console.error('Erro no saque:', data.erro || `Status ${res.status}`);
-    } else {
-      const tarifaTexto = data.tarifa > 0 ? ` (tarifa de R$ 1,00 aplicada)` : '';
-      msgSaque.textContent = `${data.mensagem} Saldo atual: R$ ${data.conta.saldo.toFixed(2)}${tarifaTexto}`;
-      msgSaque.className = 'mensagem success';
-      carregarContas();
+      console.log('Erro do backend:', msg);  // Para depuração
+      return;
     }
+    const data = await res.json();
+    const tarifaTexto = data.tarifa > 0 ? ` (tarifa de R$ 1,00 aplicada)` : '';
+    msgSaque.textContent = `${data.mensagem} Saldo atual: R$ ${data.conta.saldo.toFixed(2)}${tarifaTexto}`;
+    msgSaque.className = 'mensagem success';
+    carregarContas();
   } catch (e) {
     msgSaque.textContent = 'Erro de conexão.';
     msgSaque.className = 'mensagem error';
@@ -105,17 +117,18 @@ btnTransferir.addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ idOrigem, idDestino, valor })
     });
-    const data = await res.json();
     if (!res.ok) {
-      msgTransf.textContent = data.erro || `Erro ${res.status}`;
+      const msg = await extrairErro(res);
+      msgTransf.textContent = msg;
       msgTransf.className = 'mensagem error';
-      console.error('Erro na transferência:', data.erro || `Status ${res.status}`);
-    } else {
-      const tarifaTexto = data.tarifa > 0 ? ` (tarifa de R$ 1,00 aplicada)` : '';
-      msgTransf.textContent = `${data.mensagem}${tarifaTexto}`;
-      msgTransf.className = 'mensagem success';
-      carregarContas();
+      console.log('Erro do backend:', msg);
+      return;
     }
+    const data = await res.json();
+    const tarifaTexto = data.tarifa > 0 ? ` (tarifa de R$ 1,00 aplicada)` : '';
+    msgTransf.textContent = `${data.mensagem}${tarifaTexto}`;
+    msgTransf.className = 'mensagem success';
+    carregarContas();
   } catch (e) {
     msgTransf.textContent = 'Erro de conexão.';
     msgTransf.className = 'mensagem error';
