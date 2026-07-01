@@ -13,8 +13,14 @@ async function carregarContas() {
     const contas = await res.json();
     listaContas.innerHTML = contas.map(c =>
       `<li>
-        <span>${c.id.slice(0,8)}... (${c.tipo})</span>
-        <span>R$ ${c.saldo.toFixed(2)}</span>
+        <span class="info-conta">
+          <span class="id-conta" title="${c.id}">${c.id}</span> 
+          <span class="tipo-conta">(${c.tipo})</span>
+        </span>
+        <span class="acoes-conta">
+          <span class="saldo-conta">R$ ${c.saldo.toFixed(2)}</span>
+          <button class="btn-copiar" onclick="copiarId('${c.id}')" title="Copiar ID">📋</button>
+        </span>
       </li>`
     ).join('');
   } catch (err) {
